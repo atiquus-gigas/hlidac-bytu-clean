@@ -19,6 +19,22 @@ jobs:
         pwd
         ls -R .
 
+    - name: Debug GITHUB_WORKSPACE
+      run: |
+        echo "=== GITHUB_WORKSPACE ==="
+        echo $GITHUB_WORKSPACE
+        ls -R $GITHUB_WORKSPACE
+
+    - name: Debug sources
+      run: |
+        echo "=== SOURCES DIR ==="
+        ls -R $GITHUB_WORKSPACE/sources || echo "sources not found"
+
+    - name: Debug hlidac.py location
+      run: |
+        echo "=== HLIDAC.PY ==="
+        find $GITHUB_WORKSPACE -name "hlidac.py"
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -30,8 +46,5 @@ jobs:
 
     - name: Run script
       run: |
-        cd $GITHUB_WORKSPACE/hlidac-bytu-clean
-        echo "=== RUNNING IN ==="
-        pwd
-        ls -R .
+        cd $GITHUB_WORKSPACE
         python3 hlidac.py
