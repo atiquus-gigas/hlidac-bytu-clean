@@ -1,29 +1,29 @@
-name: Kontrola nových bytů
+name: Hlidac bytu
 
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "*/30 * * * *"   # každých 30 minut
   workflow_dispatch:
 
 jobs:
-  run-bot:
+  run-hlidac:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Stáhnutí kódu
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Nastavení Pythonu
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
 
-      - name: Instalace knihoven
-        run: |
-          pip install cloudscraper beautifulsoup4
+    - name: Install dependencies
+      run: |
+        pip install cloudscraper beautifulsoup4
 
-      - name: Spuštění hlídače
-        env:
-          EMAIL_UZIVATELE: ${{ secrets.EMAIL_UZIVATELE }}
-          HESLO_APLIKACE: ${{ secrets.HESLO_APLIKACE }}
-        run: python hlidac.py
+    - name: Run script
+      run: |
+        cd $GITHUB_WORKSPACE/hlidac-bytu-clean
+        export PYTHONPATH="$PYTHONPATH:$GITHUB_WORKSPACE/hlidac-bytu-clean"
+        python3 hlidac.py
