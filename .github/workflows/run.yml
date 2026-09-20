@@ -1,8 +1,6 @@
 name: Hlidac bytu
 
 on:
-  schedule:
-    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -13,11 +11,27 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Show workspace structure
+    - name: Debug workspace
       run: |
-        echo "Workspace:"
+        echo "=== WORKSPACE ==="
         pwd
         ls -R .
+
+    - name: Debug GITHUB_WORKSPACE
+      run: |
+        echo "=== GITHUB_WORKSPACE ==="
+        echo $GITHUB_WORKSPACE
+        ls -R $GITHUB_WORKSPACE
+
+    - name: Debug sources
+      run: |
+        echo "=== SOURCES DIR ==="
+        ls -R $GITHUB_WORKSPACE/sources || echo "sources not found"
+
+    - name: Debug hlidac.py location
+      run: |
+        echo "=== HLIDAC.PY ==="
+        find $GITHUB_WORKSPACE -name "hlidac.py"
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -31,7 +45,4 @@ jobs:
     - name: Run script
       run: |
         cd $GITHUB_WORKSPACE
-        echo "Now in:"
-        pwd
-        ls -R .
         python3 hlidac.py
