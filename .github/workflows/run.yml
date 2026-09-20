@@ -1,11 +1,23 @@
-name: test
+name: Kontrola nových bytů
 
 on:
+  schedule:
+    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 jobs:
-  test:
+  run-bot:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Hello
-        run: echo "Hello world"
+      - name: Stáhnutí kódu
+        uses: actions/checkout@v4
+
+      - name: Nastavení Pythonu
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Instalace knihoven
+        run: |
+          pip install cloudscraper beautifulsoup4
