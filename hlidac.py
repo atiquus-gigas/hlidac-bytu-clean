@@ -171,3 +171,10 @@ def zpracuj_portal(fetch_func):
         if splnuje_filtry(titulek, cena, lokalita, patro, vytah):
             HIST.add(eid)
             posli_email(portal, titulek, cena, lokalita, patro, odkaz)
+
+# -----------------------------
+# 7) MAIN
+# -----------------------------
+
+if __name__ == "__main__":
+    print("🚀 Kontrola bytů…")
