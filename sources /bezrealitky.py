@@ -1,3 +1,4 @@
+
 # sources/bezrealitky.py
 from bs4 import BeautifulSoup
 import re
@@ -31,3 +32,5 @@ def fetch(scraper):
             })
         except:
             continue
+
+    return offers
