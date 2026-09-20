@@ -1,5 +1,50 @@
-- name: Debug workspace
-  run: |
-    echo "=== WORKSPACE ==="
-    pwd
-    ls -R 
+name: Hlidac bytu
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/30 * * * *"
+
+jobs:
+  run-hlidac:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Debug workspace
+      run: |
+        echo "=== WORKSPACE ==="
+        pwd
+        ls -R .
+
+    - name: Debug GITHUB_WORKSPACE
+      run: |
+        echo "=== GITHUB_WORKSPACE ==="
+        echo $GITHUB_WORKSPACE
+        ls -R $GITHUB_WORKSPACE
+
+    - name: Debug sources
+      run: |
+        echo "=== SOURCES DIR ==="
+        ls -R $GITHUB_WORKSPACE/sources || echo "sources not found"
+
+    - name: Debug hlidac.py location
+      run: |
+        echo "=== HLIDAC.PY ==="
+        find $GITHUB_WORKSPACE -name "hlidac.py"
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Install dependencies
+      run: |
+        pip install cloudscraper beautifulsoup4
+
+    - name: Run script
+      run: |
+        cd $GITHUB_WORKSPACE
+        python3 hlidac.py
