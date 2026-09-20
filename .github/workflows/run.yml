@@ -13,6 +13,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    - name: Show workspace structure
+      run: |
+        echo "Workspace:"
+        pwd
+        ls -R .
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -23,6 +29,9 @@ jobs:
         pip install cloudscraper beautifulsoup4
 
     - name: Run script
-      working-directory: ${{ github.workspace }}/hlidac-bytu-clean
       run: |
+        cd $GITHUB_WORKSPACE
+        echo "Now in:"
+        pwd
+        ls -R .
         python3 hlidac.py
