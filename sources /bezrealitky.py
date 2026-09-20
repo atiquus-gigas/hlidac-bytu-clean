@@ -1,32 +1,33 @@
-import cloudscraper
+# sources/bezrealitky.py
 from bs4 import BeautifulSoup
+import re
 
-URL = "https://www.bezrealitky.cz/vypis/nabidka-pronajem-byt"
+def fetch(scraper):
+    url = "https://www.bezrealitky.cz/vypis/nabidka-pronajem/byt/praha"
+    html = scraper.get(url)
+    soup = BeautifulSoup(html, "html.parser")
 
-def fetch():
-    scraper = cloudscraper.create_scraper()
-    results = []
+    offers = []
 
-    try:
-        r = scraper.get(URL, timeout=10)
-        r.raise_for_status()
-        soup = BeautifulSoup(r.text, "html.parser")
+    items = soup.select("div.property")
+    for item in items:
+        try:
+            titulek = item.select_one("h2").get_text(strip=True)
+            cena = item.select_one(".price").get_text(strip=True)
+            lokalita = item.select_one(".location").get_text(strip=True)
+            odkaz = "https://www.bezrealitky.cz" + item.select_one("a")["href"]
 
-        for item in soup.select(".product"):
-            title = item.select_one(".product__title")
-            price = item.select_one(".product__price")
-            locality = item.select_one(".product__location")
-            link = item.select_one("a")
+            eid = "bezrealitky_" + re.sub(r"\D", "", odkaz)
 
-            results.append({
-                "title": title.get_text(strip=True) if title else "",
-                "price": price.get_text(strip=True) if price else "",
-                "location": locality.get_text(strip=True) if locality else "",
-                "url": "https://www.bezrealitky.cz" + link["href"] if link else ""
+            offers.append({
+                "portal": "Bezrealitky",
+                "eid": eid,
+                "titulek": titulek,
+                "cena": cena,
+                "lokalita": lokalita,
+                "patro": "",
+                "vytah": False,
+                "odkaz": odkaz,
             })
-
-        return results
-
-    except Exception as e:
-        print(f"[bezrealitky] Chyba: {e}")
-        return []
+        except:
+            continue
