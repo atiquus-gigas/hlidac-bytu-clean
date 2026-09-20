@@ -1,36 +1,35 @@
-import cloudscraper
+# sources/bazos.py
 from bs4 import BeautifulSoup
+import re
 
-URL = "https://reality.bazos.cz/pronajem/"
+def fetch(scraper):
+    url = "https://reality.bazos.cz/pronajem/?hledat=praha"
+    html = scraper.get(url)
+    soup = BeautifulSoup(html, "html.parser")
 
-def fetch():
-    scraper = cloudscraper.create_scraper()
-    results = []
+    offers = []
 
-    try:
-        r = scraper.get(URL, timeout=10)
-        r.raise_for_status()
-        soup = BeautifulSoup(r.text, "html.parser")
+    items = soup.select("div.inzeraty > div.inzerat")
+    for item in items:
+        try:
+            titulek = item.select_one("h2").get_text(strip=True)
+            cena = item.select_one(".inzeratcena").get_text(strip=True)
+            lokalita = item.select_one(".inzerattext").get_text(strip=True)
+            odkaz = item.select_one("a")["href"]
 
-        for item in soup.select(".inzeraty .inzeratynadpis"):
-            title = item.get_text(strip=True)
-            link = item.get("href")
+            eid = "bazos_" + re.sub(r"\D", "", odkaz)
 
-            price_el = item.find_next("span", class_="cena")
-            price = price_el.get_text(strip=True) if price_el else ""
-
-            location_el = item.find_next("span", class_="velikost")
-            location = location_el.get_text(strip=True) if location_el else ""
-
-            results.append({
-                "title": title,
-                "price": price,
-                "location": location,
-                "url": "https://reality.bazos.cz" + link if link else ""
+            offers.append({
+                "portal": "Bazos",
+                "eid": eid,
+                "titulek": titulek,
+                "cena": cena,
+                "lokalita": lokalita,
+                "patro": "",
+                "vytah": False,
+                "odkaz": odkaz,
             })
+        except:
+            continue
 
-        return results
-
-    except Exception as e:
-        print(f"[bazos] Chyba: {e}")
-        return []
+    return offers
